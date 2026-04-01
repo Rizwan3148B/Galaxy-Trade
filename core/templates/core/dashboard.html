@@ -1,0 +1,115 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Galaxy Trade | Dashboard{% endblock %}
+
+{% block background %}
+    <style>
+        .galaxy-animation {
+            background: radial-gradient(circle at center, #102040 0%, #000000 100%);
+            overflow: hidden;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -10;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: move-particle linear infinite;
+        }
+        @keyframes move-particle {
+            0% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-30px) translateX(30px); }
+            100% { transform: translateY(0) translateX(0); }
+        }
+    </style>
+    
+    <div class="galaxy-animation" id="galaxy-container"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const container = document.getElementById('galaxy-container');
+            const colors = ['cyan', 'magenta', 'white', 'gold'];
+            
+            for (let i = 0; i < 150; i++) {
+                let particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                let size = Math.random() * 3 + 1; 
+                let posX = Math.random() * 100; 
+                let posY = Math.random() * 100;
+                let duration = Math.random() * 20 + 10; 
+                let opacity = Math.random() * 0.8 + 0.2; 
+                let color = colors[Math.floor(Math.random() * colors.length)];
+
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = posX + 'vw';
+                particle.style.top = posY + 'vh';
+                particle.style.animationDuration = duration + 's';
+                particle.style.opacity = opacity;
+                particle.style.backgroundColor = color;
+
+                container.appendChild(particle);
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <form method="GET" action="{% url 'dashboard' %}" style="margin: 0 0 30px 0; text-align: center;">
+        <input type="text" name="ticker" placeholder="SEARCH SYMBOL (e.g. TSLA)..." required style="padding: 15px; font-size: 18px; text-transform: uppercase; width: 300px; background: rgba(0,0,0,0.5); border: 2px solid cyan; color: cyan; border-radius: 8px;">
+        <button type="submit" style="padding: 15px 30px; font-size: 18px; cursor: pointer; background: cyan; color: black; border: none; font-weight: bold; border-radius: 8px; margin-left: 10px;">SEARCH</button>
+    </form>
+
+    <div style="display: flex; gap: 30px; width: 100%; justify-content: center;">
+        
+        <div style="width: 380px; flex-shrink: 0;" class="cosmic-box">
+            <h3 style="margin: 0 0 10px 0; color: cyan;">STOCK DETAILS</h3>
+            {% if error_message %}
+                <div style="color: magenta;">{{ error_message }}</div>
+            {% else %}
+                <h2 style="margin: 0;">{{ symbol }}</h2>
+                <h1 style="margin: 5px 0;">${{ current_price }}</h1>
+                
+                {% if price_change > 0 %}
+                    <h3 style="color: lime; margin: 0;">+${{ price_change }} (+{{ percent_change }}%)</h3>
+                {% elif price_change < 0 %}
+                    <h3 style="color: magenta; margin: 0;">${{ price_change }} ({{ percent_change }}%)</h3>
+                {% else %}
+                    <h3 style="color: gray; margin: 0;">${{ price_change }} ({{ percent_change }}%)</h3>
+                {% endif %}
+
+                <form method="POST" action="{% url 'trade' %}" style="border-top: 1px solid rgba(0,255,255,0.2); margin-top: 20px; padding-top: 20px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="symbol" value="{{ symbol }}">
+                    <input type="number" name="shares" min="1" placeholder="QUANTITY (SHARES)" required style="width: 100%; padding: 12px; font-size: 16px; margin-bottom: 15px; background: rgba(0,0,0,0.3); border: 1px solid gray; color: white;">
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" name="action" value="buy" style="background: lime; color: black; padding: 12px 15px; font-size: 16px; font-weight: bold; cursor: pointer; border: none; border-radius: 4px; flex-grow: 1;">BUY</button>
+                        <button type="submit" name="action" value="sell" style="background: magenta; color: black; padding: 12px 15px; font-size: 16px; font-weight: bold; cursor: pointer; border: none; border-radius: 4px; flex-grow: 1;">SELL</button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+
+        <div style="width: 1000px;" class="cosmic-box">
+            {% if not error_message %}
+                <div class="tradingview-widget-container" style="border: 2px solid cyan; border-radius: 10px; overflow: hidden; height: 500px;">
+                    <div id="tradingview_{{ symbol }}"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                    <script type="text/javascript">
+                    new TradingView.widget({
+                        "width": "100%", "height": 500,
+                        "symbol": "{{ symbol }}",
+                        "interval": "D", "timezone": "Asia/Kolkata",
+                        "theme": "dark",
+                        "style": "1", "locale": "en",
+                        "enable_publishing": false,
+                        "container_id": "tradingview_{{ symbol }}"
+                    });
+                    </script>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

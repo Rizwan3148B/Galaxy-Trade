@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Galactic Exchange Terminal{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/galactic.css' %}">
+</head>
+<body>
+
+    {% block background %}{% endblock %}
+
+    <nav class="navbar">
+        <div class="nav-logo">🌌 GALAXY TRADE</div>
+        <div class="nav-links">
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            <a href="{% url 'portfolio' %}">Portfolio</a>
+            <a href="{% url 'history' %}">History</a>
+        </div>
+        <div class="nav-wallet">
+            <h3 style="margin: 0;">Net Worth: <span style="color: cyan;">${{ net_worth }}</span></h3>
+            <span style="color: gray;">Buying Power: ${{ virtual_cash }}</span>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+</body>
+</html>

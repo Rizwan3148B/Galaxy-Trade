@@ -1,0 +1,104 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Galaxy Trade | History & Performance{% endblock %}
+
+{% block background %}
+    <style>
+        .history-bg {
+            background-image: url('{% static "images/history_bg.png" %}');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+    <div class="bg-container history-bg"></div>
+{% endblock %}
+
+{% block content %}
+    <h1 style="text-align: center; color: cyan;">PERFORMANCE & HISTORY</h1>
+    
+    <div style="max-width: 1000px; margin: 0 auto 40px auto; display: flex; gap: 20px;">
+        
+        <div class="cosmic-box" style="flex: 1; text-align: center;">
+            <h3 style="color: gray; margin-top: 0;">TOTAL ACCOUNT PROFIT/LOSS</h3>
+            <p style="font-size: 18px; margin: 5px 0;">Starting Capital: <strong>${{ initial_capital }}</strong></p>
+            {% if total_profit >= 0 %}
+                <h1 style="color: lime; font-size: 36px; margin: 10px 0;">+${{ total_profit }}</h1>
+            {% else %}
+                <h1 style="color: magenta; font-size: 36px; margin: 10px 0;">-${{ total_profit|cut:"-" }}</h1>
+            {% endif %}
+        </div>
+
+        <div class="cosmic-box" style="flex: 2;">
+            <h3 style="color: cyan; margin-top: 0;">ACTIVE POSITIONS (UNREALIZED P/L)</h3>
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <tr style="border-bottom: 1px solid gray; color: gray; font-size: 14px;">
+                    <th style="padding-bottom: 10px;">SYMBOL</th>
+                    <th style="padding-bottom: 10px;">SHARES</th>
+                    <th style="padding-bottom: 10px;">AVG COST</th>
+                    <th style="padding-bottom: 10px;">LIVE PRICE</th>
+                    <th style="padding-bottom: 10px; text-align: right;">PROFIT/LOSS</th>
+                </tr>
+                {% for pl in profit_breakdown %}
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <td style="padding: 10px 0; font-weight: bold; color: white;">{{ pl.symbol }}</td>
+                    <td style="padding: 10px 0; color: white;">{{ pl.shares }}</td>
+                    <td style="padding: 10px 0; color: white;">${{ pl.avg_cost }}</td>
+                    <td style="padding: 10px 0; color: white;">${{ pl.live_price }}</td>
+                    <td style="padding: 10px 0; text-align: right; font-weight: bold;">
+                        {% if pl.is_profit %}
+                            <span style="color: lime;">+${{ pl.unrealized_pl }}</span>
+                        {% else %}
+                            <span style="color: magenta;">-${{ pl.unrealized_pl|cut:"-" }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="padding: 15px 0; color: gray; text-align: center;">No active positions to calculate.</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <div style="max-width: 1000px; margin: 0 auto 40px auto;" class="cosmic-box">
+        <h3 style="color: cyan; margin-top: 0;">RAW TRANSACTION LOG</h3>
+        <table class="cosmic-table">
+            <thead>
+                <tr>
+                    <th>DATE & TIME (IST)</th>
+                    <th>ACTION</th>
+                    <th>SYMBOL</th>
+                    <th>SHARES</th>
+                    <th>PRICE PER SHARE</th>
+                    <th>TOTAL VALUE</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for txn in recent_transactions %}
+                <tr>
+                    <td style="color: gray;">{{ txn.timestamp|date:"M d, Y H:i" }}</td>
+                    <td>
+                        {% if txn.action == 'buy' %}
+                            <span style="color: black; background-color: lime; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold;">BUY</span>
+                        {% else %}
+                            <span style="color: black; background-color: magenta; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold;">SELL</span>
+                        {% endif %}
+                    </td>
+                    <td style="font-weight: bold; color: cyan;">{{ txn.stock.symbol }}</td>
+                    <td>{{ txn.shares }}</td>
+                    <td>${{ txn.price }}</td>
+                    <td style="font-weight: bold;">
+                        ${% widthratio txn.shares 1 txn.price %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="padding: 30px; color: gray; text-align: center;">No transactions recorded yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

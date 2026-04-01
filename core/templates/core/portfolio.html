@@ -1,0 +1,36 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Galaxy Trade | Portfolio{% endblock %}
+
+{% block background %}
+    <style>
+        .portfolio-bg {
+            background-image: url('{% static "images/portfolio_bg.png" %}');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+    <div class="bg-container portfolio-bg"></div>
+{% endblock %}
+
+{% block content %}
+    <h1 style="text-align: center; color: cyan;">YOUR PORTFOLIO</h1>
+    <div style="max-width: 800px; margin: 40px auto;" class="cosmic-box">
+        <h3>💼 CURRENT ASSETS</h3>
+        {% for item in portfolio_data %}
+            <div style="border: 1px solid cyan; padding: 15px; margin-bottom: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5);">
+                <div>
+                    <strong style="font-size: 20px; color: cyan;">{{ item.symbol }}</strong><br>
+                    <span style="color: gray;">{{ item.shares }} Shares @ ${{ item.live_price }}</span>
+                </div>
+                <div style="text-align: right;">
+                    <span style="font-size: 22px; font-weight: bold;">${{ item.position_value }}</span><br>
+                    <span style="color: lime;">STATUS: ACTIVE</span>
+                </div>
+            </div>
+        {% empty %}
+            <p style="color: gray; font-style: italic;">Your portfolio is currently empty.</p>
+        {% endfor %}
+    </div>
+{% endblock %}
