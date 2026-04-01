@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<style>
+    .auth-form input { width: 100%; padding: 10px; margin-bottom: 15px; background: rgba(0,0,0,0.5); border: 1px solid magenta; color: white; border-radius: 5px; }
+    .auth-form label { color: magenta; font-family: monospace; }
+    .auth-form ul { color: red; font-size: 12px; }
+</style>
+
+<div style="max-width: 400px; margin: 100px auto;" class="cosmic-box auth-form">
+    <h2 style="color: magenta; text-align: center; border-bottom: 1px solid magenta; padding-bottom: 10px;">NEW COMMANDER REGISTRATION</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" style="width: 100%; padding: 12px; background: magenta; color: black; font-weight: bold; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;">CREATE ACCOUNT</button>
+    </form>
+    <p style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'login' %}" style="color: cyan; text-decoration: none;">Already registered? Login here.</a>
+    </p>
+</div>
+{% endblock %}

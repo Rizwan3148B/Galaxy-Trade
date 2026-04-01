@@ -1,0 +1,62 @@
+{% extends 'core/base.html' %} {% block content %}
+<style>
+  .auth-form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid cyan;
+    color: white;
+    border-radius: 5px;
+  }
+  .auth-form label {
+    color: cyan;
+    font-family: monospace;
+  }
+</style>
+
+<div style="max-width: 400px; margin: 100px auto" class="cosmic-box auth-form">
+  <h2
+    style="
+      color: cyan;
+      text-align: center;
+      border-bottom: 1px solid cyan;
+      padding-bottom: 10px;
+    "
+  >
+    SYSTEM LOGIN
+  </h2>
+  <form method="POST">
+    {% csrf_token %} {{ form.as_p }}
+    <button
+      type="submit"
+      style="
+        width: 100%;
+        padding: 12px;
+        background: cyan;
+        color: black;
+        font-weight: bold;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+      "
+    >
+      ENTER GALAXY
+    </button>
+    <div style="text-align: center; margin-top: 15px">
+      <a
+        href="{% url 'password_reset' %}"
+        style="color: yellow; text-decoration: none; font-size: 14px"
+        >Forgot your password?</a
+      >
+    </div>
+  </form>
+  <p style="text-align: center; margin-top: 20px">
+    <a href="{% url 'register' %}" style="color: magenta; text-decoration: none"
+      >No account? Register here.</a
+    >
+  </p>
+</div>
+{% endblock %}

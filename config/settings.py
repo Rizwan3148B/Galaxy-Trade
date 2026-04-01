@@ -126,3 +126,18 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "core/static",
 ]
+
+# --- REAL EMAIL CONFIGURATION (GMAIL) ---
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# The email address you are sending FROM
+EMAIL_HOST_USER = '424101@student.nitandhra.ac.in' 
+
+# The 16-character App Password Google just gave you (no spaces)
+EMAIL_HOST_PASSWORD = 'your-app-password' 
+
+# Default From Email (What the user sees as the sender)
+DEFAULT_FROM_EMAIL = 'Galaxy Trade Terminal <424101@student.nitandhra.ac.in>'

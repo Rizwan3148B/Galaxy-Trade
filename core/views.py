@@ -1,7 +1,11 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import login, logout, get_user_model
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.decorators import login_required
 import yfinance as yf
 from decimal import Decimal
 from .models import Stock, Portfolio, Transaction
+from django import forms
 
 # --- HELPER: Calculates global Net Worth and Cash ---
 def get_base_context(user):
@@ -13,39 +17,53 @@ def get_base_context(user):
     return context, portfolio_qs
 
 # --- VIEW 1: Market Floor (Dashboard) ---
+POPULAR_STOCKS = [
+    {'symbol': 'AAPL', 'name': 'Apple Inc.'},
+    {'symbol': 'MSFT', 'name': 'Microsoft Corp.'},
+    {'symbol': 'NVDA', 'name': 'NVIDIA Corp.'},
+    {'symbol': 'TSLA', 'name': 'Tesla Inc.'},
+    {'symbol': 'AMZN', 'name': 'Amazon.com'},
+    {'symbol': 'GOOGL', 'name': 'Alphabet (Google)'},
+    {'symbol': 'META', 'name': 'Meta Platforms'},
+    {'symbol': 'NFLX', 'name': 'Netflix Inc.'},
+    {'symbol': 'DIS', 'name': 'Walt Disney Co.'},
+    {'symbol': 'NKE', 'name': 'Nike Inc.'},
+    {'symbol': 'SBUX', 'name': 'Starbucks'},
+    {'symbol': 'AMD', 'name': 'Advanced Micro Devices'}
+]
+
+@login_required(login_url='login')
 def dashboard(request):
     symbol = request.GET.get('ticker', 'AAPL').upper()
+    
+    # Get the basic navbar context
     base_context, portfolio_qs = get_base_context(request.user)
     
-    total_stock_value = Decimal('0.00')
-    for item in portfolio_qs:
-        try:
-            t = yf.Ticker(item.stock.symbol)
-            live_price = Decimal(str(round(t.fast_info.last_price, 2)))
-            total_stock_value += (live_price * item.shares)
-        except: pass
-    
-    net_worth = round(base_context['virtual_cash'] + total_stock_value, 2)
-    context = {**base_context, 'net_worth': net_worth, 'symbol': symbol}
+    context = {
+        **base_context,
+        'symbol': symbol,
+        'popular_stocks': POPULAR_STOCKS, 
+    }
     
     try:
         ticker = yf.Ticker(symbol)
-        current_price = ticker.fast_info.last_price
-        previous_close = ticker.fast_info.previous_close
-        price_change = current_price - previous_close
+        info = ticker.fast_info
+        current_price = info.last_price
+        prev_close = info.previous_close
+        price_change = current_price - prev_close
         
         context.update({
             'current_price': round(current_price, 2), 
-            'previous_close': round(previous_close, 2),
             'price_change': round(price_change, 2),
-            'percent_change': round((price_change / previous_close) * 100, 2),
+            'percent_change': round((price_change / prev_close) * 100, 2),
         })
-    except:
-        context['error_message'] = f"Could not find data for '{symbol}'."
+    except Exception:
+        context['error_message'] = f"Unable to fetch live data for '{symbol}'."
     
     return render(request, 'core/dashboard.html', context)
 
 # --- VIEW 2: Cargo Hold (Portfolio) ---
+@login_required(login_url='login')
 def portfolio_view(request):
     base_context, portfolio_qs = get_base_context(request.user)
     portfolio_data = []
@@ -67,7 +85,9 @@ def portfolio_view(request):
     context = {**base_context, 'net_worth': net_worth, 'portfolio_data': portfolio_data}
     
     return render(request, 'core/portfolio.html', context)
+
 # --- VIEW 3: Flight Ledger (History) ---
+@login_required(login_url='login')
 def history_view(request):
     base_context, portfolio_qs = get_base_context(request.user)
     recent_transactions = Transaction.objects.filter(user=request.user).order_by('-timestamp')[:20]
@@ -119,7 +139,9 @@ def history_view(request):
     }
     
     return render(request, 'core/history.html', context)
+
 # --- ACTION: Trade Logic ---
+@login_required(login_url='login')
 def trade(request):
     if request.method == 'POST':
         symbol = request.POST.get('symbol').upper()
@@ -147,3 +169,60 @@ def trade(request):
                     Transaction.objects.create(user=request.user, stock=stock_obj, action='sell', shares=shares, price=price)
             except: pass 
     return redirect('dashboard')
+
+
+# =========================================================
+# --- NEW AUTHENTICATION VIEWS ---
+# =========================================================
+
+User = get_user_model()
+
+class GalaxyRegisterForm(UserCreationForm):
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
+    email = forms.EmailField(required=True)
+    phone_number = forms.CharField(max_length=15, required=False)
+    
+    # This widget automatically turns the input into a clickable calendar!
+    date_of_birth = forms.DateField(
+        required=False, 
+        widget=forms.DateInput(attrs={'type': 'date'}) 
+    )
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        # The order here is exactly how it will appear on the screen
+        fields = ("username", "first_name", "last_name", "email", "phone_number", "date_of_birth")
+
+    # Custom validation to double-check that the email is truly unique
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("Transmission failed: This email is already registered to another commander.")
+        return email
+
+def register(request):
+    if request.method == 'POST':
+        form = GalaxyRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user) # Automatically log them in after registering
+            return redirect('dashboard')
+    else:
+        form = GalaxyRegisterForm()
+    return render(request, 'core/register.html', {'form': form})
+
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('dashboard')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'core/login.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')

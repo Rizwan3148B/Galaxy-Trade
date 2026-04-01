@@ -12,15 +12,24 @@
 
     <nav class="navbar">
         <div class="nav-logo">🌌 GALAXY TRADE</div>
-        <div class="nav-links">
-            <a href="{% url 'dashboard' %}">Dashboard</a>
-            <a href="{% url 'portfolio' %}">Portfolio</a>
-            <a href="{% url 'history' %}">History</a>
-        </div>
-        <div class="nav-wallet">
-            <h3 style="margin: 0;">Net Worth: <span style="color: cyan;">${{ net_worth }}</span></h3>
-            <span style="color: gray;">Buying Power: ${{ virtual_cash }}</span>
-        </div>
+        
+        {% if user.is_authenticated %}
+            <div class="nav-links">
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <a href="{% url 'portfolio' %}">Portfolio</a>
+                <a href="{% url 'history' %}">History</a>
+                <a href="{% url 'logout' %}" style="color: magenta;">Logout</a>
+            </div>
+            <div class="nav-wallet">
+                <h3 style="margin: 0;">Net Worth: <span style="color: cyan;">${{ net_worth }}</span></h3>
+                <span style="color: gray;">Buying Power: ${{ virtual_cash }}</span>
+            </div>
+        {% else %}
+            <div class="nav-links">
+                <a href="{% url 'login' %}" style="color: cyan;">Login</a>
+                <a href="{% url 'register' %}" style="color: magenta;">Register</a>
+            </div>
+        {% endif %}
     </nav>
 
     <main class="main-content">

@@ -11,7 +11,9 @@ class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     profile_pic = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     virtual_cash = models.DecimalField(max_digits=12, decimal_places=2, default=10000.00)
-    
+    email = models.EmailField(unique=True) # This strictly enforces 1 user per email
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    date_of_birth = models.DateField(blank=True, null=True)
     def __str__(self):
         return self.username
 
