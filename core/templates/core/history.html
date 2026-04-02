@@ -19,13 +19,34 @@
     
     <div style="max-width: 1000px; margin: 0 auto 40px auto; display: flex; gap: 20px;">
         
-        <div class="cosmic-box" style="flex: 1; text-align: center;">
-            <h3 style="color: gray; margin-top: 0;">TOTAL ACCOUNT PROFIT/LOSS</h3>
-            <p style="font-size: 18px; margin: 5px 0;">Starting Capital: <strong>${{ initial_capital }}</strong></p>
-            {% if total_profit >= 0 %}
-                <h1 style="color: lime; font-size: 36px; margin: 10px 0;">+${{ total_profit }}</h1>
+        <div class="cosmic-box" style="flex: 1;">
+            <h3 style="color: gray; text-align: center; margin-top: 0;">TOTAL ACCOUNT PROFIT/LOSS</h3>
+            <p style="text-align: center; font-size: 18px; margin: 5px 0 15px 0;">Starting Capital: <strong>${{ initial_capital }}</strong></p>
+            
+            <hr style="border-color: cyan; opacity: 0.3; margin-bottom: 15px;">
+            
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-family: monospace; font-size: 14px;">
+                <span style="color: #aaaaaa;">Realized (Closed Trades):</span>
+                {% if realized_pl >= 0 %}
+                    <span style="color: lime;">+${{ realized_pl|floatformat:2 }}</span>
+                {% else %}
+                    <span style="color: magenta;">-${{ realized_pl|floatformat:2|cut:"-" }}</span>
+                {% endif %}
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-family: monospace; font-size: 14px;">
+                <span style="color: #aaaaaa;">Unrealized (Active Positions):</span>
+                {% if total_unrealized_pl >= 0 %}
+                    <span style="color: lime;">+${{ total_unrealized_pl|floatformat:2 }}</span>
+                {% else %}
+                    <span style="color: magenta;">-${{ total_unrealized_pl|floatformat:2|cut:"-" }}</span>
+                {% endif %}
+            </div>
+            
+            {% if total_pl >= 0 %}
+                <h1 style="text-align: center; color: lime; font-size: 36px; margin: 10px 0;">+${{ total_pl|floatformat:2 }}</h1>
             {% else %}
-                <h1 style="color: magenta; font-size: 36px; margin: 10px 0;">-${{ total_profit|cut:"-" }}</h1>
+                <h1 style="text-align: center; color: magenta; font-size: 36px; margin: 10px 0;">-${{ total_pl|floatformat:2|cut:"-" }}</h1>
             {% endif %}
         </div>
 

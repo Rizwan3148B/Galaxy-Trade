@@ -32,5 +32,11 @@ urlpatterns = [
     path('reset_password_complete/', 
          auth_views.PasswordResetCompleteView.as_view(template_name='core/password_reset_complete.html'), 
          name='password_reset_complete'),
+         
+     # Path to Watchlist
+    path('toggle-watchlist/', views.toggle_watchlist, name='toggle_watchlist'),
+
+     #profile
+    path('profile/', views.profile_view, name='profile'),
 
 ]

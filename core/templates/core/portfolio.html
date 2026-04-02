@@ -16,8 +16,9 @@
 
 {% block content %}
     <h1 style="text-align: center; color: cyan;">YOUR PORTFOLIO</h1>
+    
     <div style="max-width: 800px; margin: 40px auto;" class="cosmic-box">
-        <h3>💼 CURRENT ASSETS</h3>
+        <h3 style="color: cyan; margin-top: 0;">💼 CURRENT ASSETS</h3>
         {% for item in portfolio_data %}
             <div style="border: 1px solid cyan; padding: 15px; margin-bottom: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.5);">
                 <div>
@@ -30,7 +31,49 @@
                 </div>
             </div>
         {% empty %}
-            <p style="color: gray; font-style: italic;">Your portfolio is currently empty.</p>
+            <p style="color: gray; font-style: italic; text-align: center; padding: 20px;">Your portfolio is currently empty.</p>
         {% endfor %}
+    </div>
+
+    <div class="cosmic-box" style="max-width: 800px; margin: 40px auto;">
+        <h3 style="color: cyan; margin-top: 0;">🛰️ SATELLITE WATCHLIST</h3>
+        <table class="cosmic-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 1px solid gray; color: gray; font-size: 14px;">
+                    <th style="padding-bottom: 10px;">SYMBOL</th>
+                    <th style="padding-bottom: 10px;">LIVE PRICE</th>
+                    <th style="padding-bottom: 10px;">DAY CHANGE</th>
+                    <th style="padding-bottom: 10px; text-align: right;">ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stock in watchlist_data %}
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <td style="padding: 15px 0; font-weight: bold; color: cyan;">{{ stock.symbol }}</td>
+                    <td style="padding: 15px 0; color: white;">${{ stock.current_price|floatformat:2 }}</td>
+                    <td style="padding: 15px 0; font-weight: bold;">
+                        {% if stock.is_up %}
+                            <span style="color: lime;">+${{ stock.price_change|floatformat:2 }} (+{{ stock.percent_change|floatformat:2 }}%)</span>
+                        {% else %}
+                            <span style="color: magenta;">-${{ stock.price_change|floatformat:2|cut:"-" }} ({{ stock.percent_change|floatformat:2 }}%)</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 15px 0; text-align: right;">
+                        <form action="{% url 'toggle_watchlist' %}" method="POST" style="margin: 0;">
+                            {% csrf_token %}
+                            <input type="hidden" name="symbol" value="{{ stock.symbol }}">
+                            <button type="submit" style="background-color: transparent; border: 1px solid magenta; color: magenta; padding: 5px 15px; cursor: pointer; border-radius: 4px; font-weight: bold;">
+                                REMOVE
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="padding: 30px; color: gray; text-align: center; font-style: italic;">No coordinates tracked. Add stocks to your watchlist from the dashboard.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}

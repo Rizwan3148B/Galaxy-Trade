@@ -102,11 +102,19 @@
                 <form method="POST" action="{% url 'trade' %}" style="border-top: 1px solid rgba(0,255,255,0.2); margin-top: 20px; padding-top: 20px;">
                     {% csrf_token %}
                     <input type="hidden" name="symbol" value="{{ symbol }}">
-                    <input type="number" name="shares" min="1" placeholder="QUANTITY (SHARES)" required style="width: 100%; padding: 12px; font-size: 16px; margin-bottom: 15px; background: rgba(0,0,0,0.3); border: 1px solid gray; color: white;">
+                    <input type="number" name="shares" min="1" placeholder="QUANTITY (SHARES)" required style="width: 100%; padding: 12px; font-size: 16px; margin-bottom: 15px; background: rgba(0,0,0,0.3); border: 1px solid gray; color: white; box-sizing: border-box;">
                     <div style="display: flex; gap: 10px;">
                         <button type="submit" name="action" value="buy" style="background: lime; color: black; padding: 12px 15px; font-size: 16px; font-weight: bold; cursor: pointer; border: none; border-radius: 4px; flex-grow: 1;">BUY</button>
                         <button type="submit" name="action" value="sell" style="background: magenta; color: black; padding: 12px 15px; font-size: 16px; font-weight: bold; cursor: pointer; border: none; border-radius: 4px; flex-grow: 1;">SELL</button>
                     </div>
+                </form>
+
+                <form method="POST" action="{% url 'toggle_watchlist' %}" style="margin-top: 10px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="symbol" value="{{ symbol }}">
+                    <button type="submit" style="width: 100%; background: transparent; border: 1px solid cyan; color: cyan; padding: 12px 15px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s;" onmouseover="this.style.background='rgba(0,255,255,0.1)'" onmouseout="this.style.background='transparent'">
+                        ⭐ TOGGLE WATCHLIST
+                    </button>
                 </form>
             {% endif %}
         </div>

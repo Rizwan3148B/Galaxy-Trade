@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 import yfinance as yf
 from decimal import Decimal
-from .models import Stock, Portfolio, Transaction
+from .models import Stock, Portfolio, Transaction, Watchlist
 from django import forms
 
 # --- HELPER: Calculates global Net Worth and Cash ---
@@ -62,13 +62,14 @@ def dashboard(request):
     
     return render(request, 'core/dashboard.html', context)
 
-# --- VIEW 2: Cargo Hold (Portfolio) ---
+# 2. Upgrade the Portfolio View
 @login_required(login_url='login')
 def portfolio_view(request):
     base_context, portfolio_qs = get_base_context(request.user)
     portfolio_data = []
     total_stock_value = Decimal('0.00')
 
+    # --- EXISTING PORTFOLIO LOGIC ---
     for item in portfolio_qs:
         try:
             t = yf.Ticker(item.stock.symbol)
@@ -81,11 +82,58 @@ def portfolio_view(request):
             })
         except: pass
 
+    # --- NEW WATCHLIST LOGIC ---
+    watchlist_qs = Watchlist.objects.filter(user=request.user)
+    watchlist_data = []
+    
+    for item in watchlist_qs:
+        try:
+            t = yf.Ticker(item.stock.symbol)
+            info = t.fast_info
+            current_price = info.last_price
+            prev_close = info.previous_close
+            price_change = current_price - prev_close
+            
+            watchlist_data.append({
+                'symbol': item.stock.symbol,
+                'current_price': round(current_price, 2),
+                'price_change': round(price_change, 2),
+                'percent_change': round((price_change / prev_close) * 100, 2),
+                'is_up': price_change >= 0
+            })
+        except: pass
+
     net_worth = round(base_context['virtual_cash'] + total_stock_value, 2)
-    context = {**base_context, 'net_worth': net_worth, 'portfolio_data': portfolio_data}
+    
+    context = {
+        **base_context, 
+        'net_worth': net_worth, 
+        'portfolio_data': portfolio_data,
+        'watchlist_data': watchlist_data # Pass the new data to the template
+    }
     
     return render(request, 'core/portfolio.html', context)
 
+
+# 3. Add this brand new view anywhere in views.py to handle Add/Remove clicks
+@login_required(login_url='login')
+def toggle_watchlist(request):
+    if request.method == 'POST':
+        symbol = request.POST.get('symbol').upper()
+        
+        # Get or create the stock in the master list
+        stock_obj, _ = Stock.objects.get_or_create(symbol=symbol, defaults={'company_name': symbol})
+        
+        # Check if the user is already watching it
+        watchlist_item = Watchlist.objects.filter(user=request.user, stock=stock_obj).first()
+        
+        if watchlist_item:
+            watchlist_item.delete() # If it's there, remove it
+        else:
+            Watchlist.objects.create(user=request.user, stock=stock_obj) # If it's not, add it
+            
+    # Refresh the page they are currently on
+    return redirect(request.META.get('HTTP_REFERER', 'portfolio'))
 # --- VIEW 3: Flight Ledger (History) ---
 @login_required(login_url='login')
 def history_view(request):
@@ -94,6 +142,7 @@ def history_view(request):
     
     initial_capital = Decimal('10000.00') # Your starting cash
     total_stock_value = Decimal('0.00')
+    total_unrealized_pl = Decimal('0.00') # Track total active profit
     profit_breakdown = []
     
     for item in portfolio_qs:
@@ -113,6 +162,7 @@ def history_view(request):
             
             # Calculate Profit / Loss
             unrealized_pl = current_value - cost_basis
+            total_unrealized_pl += unrealized_pl # Accumulate total unrealized profit
             
             profit_breakdown.append({
                 'symbol': item.stock.symbol,
@@ -126,14 +176,18 @@ def history_view(request):
         except: 
             pass
             
-    net_worth = round(base_context['virtual_cash'] + total_stock_value, 2)
-    total_profit = round(net_worth - initial_capital, 2)
+    # Calculate overarching metrics
+    net_worth = Decimal(str(base_context['virtual_cash'])) + total_stock_value
+    total_pl = net_worth - initial_capital
+    realized_pl = total_pl - total_unrealized_pl
     
     context = {
         **base_context, 
         'recent_transactions': recent_transactions, 
-        'net_worth': net_worth,
-        'total_profit': total_profit,
+        'net_worth': round(net_worth, 2),
+        'total_pl': round(total_pl, 2),
+        'realized_pl': round(realized_pl, 2),
+        'total_unrealized_pl': round(total_unrealized_pl, 2),
         'initial_capital': initial_capital,
         'profit_breakdown': profit_breakdown
     }
@@ -226,3 +280,14 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+# Profile
+@login_required(login_url='login')
+def profile_view(request):
+    # Fetch your standard context (cash, net worth, etc.) so the navbar still works
+    base_context, _ = get_base_context(request.user)
+    
+    context = {
+        **base_context,
+        'user': request.user, # Pass the currently logged-in user details
+    }
+    return render(request, 'core/profile.html', context)
