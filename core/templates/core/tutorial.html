@@ -1,0 +1,133 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="main-content">
+    <div class="cosmic-box" style="max-width: 1000px; margin: 0 auto; line-height: 1.6;">
+        
+        <div style="text-align: center; margin-bottom: 40px;">
+            <h1 style="color: cyan; font-size: 2.5rem; text-shadow: 0 0 15px rgba(0,255,255,0.4);">
+                PILOT TRAINING MANUAL
+            </h1>
+            <p style="color: rgba(255,255,255,0.7); font-style: italic;">
+                Master the charts, decode the data, and dominate the Galactic Exchange.
+            </p>
+        </div>
+
+        <section style="margin-bottom: 50px;">
+            <h2 style="color: magenta; border-bottom: 1px solid magenta; padding-bottom: 5px;">1. HOW PROFIT & LOSS WORKS</h2>
+            <p>Trading is the art of predicting price movement. Your goal is to increase your <strong>Net Worth</strong> by identifying stocks that will rise in value.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+                <div style="background: rgba(0, 255, 0, 0.05); padding: 20px; border: 1px solid #00ff00; border-radius: 8px;">
+                    <h4 style="color: #00ff00; margin-top: 0;">PROFIT (The Rise)</h4>
+                    <p>When you sell a stock for <strong>more</strong> than you paid for it. <br>
+                    <em>Formula: (Selling Price - Buying Price) × Quantity</em></p>
+                </div>
+                <div style="background: rgba(255, 0, 0, 0.05); padding: 20px; border: 1px solid #ff0000; border-radius: 8px;">
+                    <h4 style="color: #ff0000; margin-top: 0;">LOSS (The Fall)</h4>
+                    <p>When you sell a stock for <strong>less</strong> than you paid for it. <br>
+                    <em>Formula: (Buying Price - Selling Price) × Quantity</em></p>
+                </div>
+            </div>
+        </section>
+
+        <section style="margin-bottom: 50px;">
+            <h2 style="color: magenta; border-bottom: 1px solid magenta; padding-bottom: 5px;">2. DECODING THE CHART</h2>
+            <p>The chart is your primary radar. It tracks the <strong>Price (Y-Axis)</strong> against <strong>Time (X-Axis)</strong>.</p>
+            
+            
+
+            <div class="cosmic-box" style="background: rgba(255,255,255,0.03); margin-top: 20px;">
+                <h3 style="color: cyan;">Candlesticks & Accuracy</h3>
+                <ul>
+                    <li><strong>Green Candles:</strong> Price went UP. The bottom of the block is where it started; the top is where it ended.</li>
+                    <li><strong>Red Candles:</strong> Price went DOWN. The top is where it started; the bottom is where it ended.</li>
+                    <li><strong>The Wicks:</strong> The thin lines above/below show the <strong>highest</strong> and <strong>lowest</strong> prices reached during that time period.</li>
+                    <li><strong>Reading Values:</strong> Hover your cursor over any candle. The precise Open, High, Low, and Close values will appear at the top-left of the chart.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section style="margin-bottom: 50px;">
+            <h2 style="color: magenta; border-bottom: 1px solid magenta; padding-bottom: 5px;">3. INDICATORS & ANALYSIS</h2>
+            <p>Indicators are mathematical overlays that help you analyze stock behavior.</p>
+            
+            
+
+[Image of stock chart technical indicators]
+
+
+            <div class="cosmic-table-container" style="margin-top: 20px;">
+                <table class="cosmic-table">
+                    <thead>
+                        <tr>
+                            <th>Tool</th>
+                            <th>How to use it</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="color: cyan;"><strong>Timeframes (1m - D)</strong></td>
+                            <td>Use <strong>1m/30m</strong> for quick trades. Use <strong>D (Daily)</strong> to see the long-term trend of the company.</td>
+                        </tr>
+                        <tr>
+                            <td style="color: cyan;"><strong>Indicators Tab</strong></td>
+                            <td>Add <strong>RSI</strong> to see if a stock is "Overbought" (above 70) or "Oversold" (below 30).</td>
+                        </tr>
+                        <tr>
+                            <td style="color: cyan;"><strong>Volume Bars</strong></td>
+                            <td>The bars at the bottom. High bars mean many people are trading, confirming that a price move is strong.</td>
+                        </tr>
+                        <tr>
+                            <td style="color: cyan;"><strong>Graph Types</strong></td>
+                            <td>Switch between <strong>Candles</strong> (detailed), <strong>Line</strong> (simple), or <strong>Area</strong> (visual growth).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section style="margin-bottom: 50px;">
+            <h2 style="color: magenta; border-bottom: 1px solid magenta; padding-bottom: 5px;">4. FEATURE TERMINOLOGY</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                <div class="cosmic-box" style="text-align: center; border-color: rgba(0,255,255,0.2);">
+                    <h5 style="color: cyan; margin: 0;">SYMBOL</h5>
+                    <p style="font-size: 0.9rem;">The unique code for a company (e.g., AAPL for Apple).</p>
+                </div>
+                <div class="cosmic-box" style="text-align: center; border-color: rgba(0,255,255,0.2);">
+                    <h5 style="color: cyan; margin: 0;">BUYING POWER</h5>
+                    <p style="font-size: 0.9rem;">The cash you have available to buy new stocks.</p>
+                </div>
+                <div class="cosmic-box" style="text-align: center; border-color: rgba(0,255,255,0.2);">
+                    <h5 style="color: cyan; margin: 0;">NET WORTH</h5>
+                    <p style="font-size: 0.9rem;">Total Value = Cash + Current Value of all owned stocks.</p>
+                </div>
+            </div>
+        </section>
+
+        <div style="text-align: center; padding-top: 30px; border-top: 1px dashed rgba(0,255,255,0.3);">
+            <p style="margin-bottom: 20px;">Training Complete. You are ready to enter the market.</p>
+            <a href="{% url 'dashboard' %}" class="btn-galactic" style="padding: 15px 50px; text-decoration: none; font-size: 1.2rem;">
+                LAUNCH TO DASHBOARD
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    /* Ensure the tutorial looks good on mobile */
+    @media (max-width: 768px) {
+        .main-content { padding: 15px; }
+        h1 { font-size: 1.8rem; }
+    }
+    
+    section p {
+        color: rgba(255,255,255,0.8);
+    }
+    
+    li {
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}

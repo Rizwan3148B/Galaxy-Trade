@@ -291,3 +291,8 @@ def profile_view(request):
         'user': request.user, # Pass the currently logged-in user details
     }
     return render(request, 'core/profile.html', context)
+
+def tutorial_view(request):
+    # We still need the navbar data
+    base_context, _ = get_base_context(request.user) 
+    return render(request, 'core/tutorial.html', base_context)

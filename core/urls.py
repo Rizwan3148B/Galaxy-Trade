@@ -38,5 +38,8 @@ urlpatterns = [
 
      #profile
     path('profile/', views.profile_view, name='profile'),
+     
+     #Tutorial.
+    path('tutorial/', views.tutorial_view, name='tutorial'),
 
 ]
