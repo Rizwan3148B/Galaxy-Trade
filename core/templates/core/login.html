@@ -1,62 +1,87 @@
-{% extends 'core/base.html' %} {% block content %}
+{% extends 'core/base.html' %} 
+
+{% block content %}
+<div class="bg-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #0d1b2a 0%, #050a14 100%); z-index: -1;"></div>
+
 <style>
+  /* Centers the login box on the screen */
+  .auth-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 85vh;
+  }
+
   .auth-form input {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin-bottom: 15px;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     border: 1px solid cyan;
     color: white;
     border-radius: 5px;
+    box-sizing: border-box;
+    font-family: 'Space Mono', monospace;
   }
+
   .auth-form label {
     color: cyan;
-    font-family: monospace;
+    font-family: 'Space Mono', monospace;
+    display: block;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+  }
+
+  .btn-login {
+    width: 100%;
+    padding: 12px;
+    background: cyan;
+    color: black;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+    text-transform: uppercase;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .btn-login:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+    transform: translateY(-2px);
   }
 </style>
 
-<div style="max-width: 400px; margin: 100px auto" class="cosmic-box auth-form">
-  <h2
-    style="
-      color: cyan;
-      text-align: center;
-      border-bottom: 1px solid cyan;
-      padding-bottom: 10px;
-    "
-  >
-    SYSTEM LOGIN
-  </h2>
-  <form method="POST">
-    {% csrf_token %} {{ form.as_p }}
-    <button
-      type="submit"
-      style="
-        width: 100%;
-        padding: 12px;
-        background: cyan;
-        color: black;
-        font-weight: bold;
-        font-size: 16px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 10px;
-      "
-    >
-      ENTER GALAXY
-    </button>
-    <div style="text-align: center; margin-top: 15px">
-      <a
-        href="{% url 'password_reset' %}"
-        style="color: yellow; text-decoration: none; font-size: 14px"
-        >Forgot your password?</a
-      >
-    </div>
-  </form>
-  <p style="text-align: center; margin-top: 20px">
-    <a href="{% url 'register' %}" style="color: magenta; text-decoration: none"
-      >No account? Register here.</a
-    >
-  </p>
+<div class="auth-wrapper">
+  <div style="max-width: 400px; width: 100%;" class="cosmic-box auth-form">
+    <h2 style="color: cyan; text-align: center; border-bottom: 1px solid cyan; padding-bottom: 10px; margin-top: 0;">
+      SYSTEM LOGIN
+    </h2>
+
+    <form method="POST">
+      {% csrf_token %} 
+      
+      {{ form.as_p }}
+
+      <button type="submit" class="btn-login">
+        ENTER GALAXY
+      </button>
+
+      <div style="text-align: center; margin-top: 15px">
+        <a href="{% url 'password_reset' %}" style="color: yellow; text-decoration: none; font-size: 14px">
+          Forgot your password?
+        </a>
+      </div>
+    </form>
+
+    <p style="text-align: center; margin-top: 20px">
+      <a href="{% url 'register' %}" style="color: magenta; text-decoration: none">
+        No account? Register here.
+      </a>
+    </p>
+  </div>
 </div>
 {% endblock %}

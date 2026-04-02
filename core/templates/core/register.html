@@ -1,21 +1,101 @@
-{% extends 'core/base.html' %}
+{% extends 'core/base.html' %} 
 
 {% block content %}
+<div class="bg-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #0d1b2a 0%, #050a14 100%); z-index: -1;"></div>
+
 <style>
-    .auth-form input { width: 100%; padding: 10px; margin-bottom: 15px; background: rgba(0,0,0,0.5); border: 1px solid magenta; color: white; border-radius: 5px; }
-    .auth-form label { color: magenta; font-family: monospace; }
-    .auth-form ul { color: red; font-size: 12px; }
+  .auth-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 85vh;
+  }
+
+  .auth-form input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid magenta; 
+    color: white;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .auth-form label {
+    color: magenta;
+    font-family: 'Space Mono', monospace;
+    display: block;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+  }
+
+  /* Django default help text styling */
+  .helptext {
+    display: block;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 15px;
+    line-height: 1.4;
+  }
+
+  .btn-register {
+    width: 100%;
+    padding: 12px;
+    background: magenta;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+    text-transform: uppercase;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .btn-register:hover {
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.6);
+    transform: translateY(-2px);
+  }
+  
+  /* Styling for any validation error lists */
+  .errorlist {
+    color: #ff4444;
+    font-size: 12px;
+    list-style: none;
+    padding: 0;
+    margin-bottom: 10px;
+  }
 </style>
 
-<div style="max-width: 400px; margin: 100px auto;" class="cosmic-box auth-form">
-    <h2 style="color: magenta; text-align: center; border-bottom: 1px solid magenta; padding-bottom: 10px;">NEW COMMANDER REGISTRATION</h2>
+<div class="auth-wrapper">
+  <div style="max-width: 450px; width: 100%;" class="cosmic-box auth-form">
+    <h2 style="color: magenta; text-align: center; border-bottom: 1px solid magenta; padding-bottom: 10px; margin-top: 0;">
+      REGISTER
+    </h2>
+
     <form method="POST">
-        {% csrf_token %}
+      {% csrf_token %} 
+      
+      <div class="registration-fields">
         {{ form.as_p }}
-        <button type="submit" style="width: 100%; padding: 12px; background: magenta; color: black; font-weight: bold; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;">CREATE ACCOUNT</button>
+      </div>
+
+      <button type="submit" class="btn-register">
+        REGISTER
+      </button>
     </form>
-    <p style="text-align: center; margin-top: 20px;">
-        <a href="{% url 'login' %}" style="color: cyan; text-decoration: none;">Already registered? Login here.</a>
-    </p>
+
+    <div style="text-align: center; margin-top: 25px; border-top: 1px solid rgba(255, 0, 255, 0.2); padding-top: 15px;">
+      <p style="font-size: 14px; color: white; margin-bottom: 5px;">Already have an account?</p>
+      <a href="{% url 'login' %}" style="color: cyan; text-decoration: none; font-weight: bold;">
+        Login here
+      </a>
+    </div>
+  </div>
 </div>
 {% endblock %}
